@@ -11,9 +11,12 @@ router.use(authMiddleware);
 
 router.post('/', validate(createApplicationSchema), applicationController.addApplication);
 router.get('/', applicationController.getApplications);
-router.get('/:id', applicationController.getApplicationById);
+
+// Specific routes BEFORE parameterized /:id
 router.get('/user/:userId', applicationController.getApplicationsByUserId);
 router.get('/job/:jobId', applicationController.getApplicationsByJobId);
+
+router.get('/:id', applicationController.getApplicationById);
 router.put('/:id', validate(updateApplicationSchema), applicationController.updateApplication);
 router.delete('/:id', applicationController.deleteApplication);
 
