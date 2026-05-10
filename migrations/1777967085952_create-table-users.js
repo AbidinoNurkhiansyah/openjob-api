@@ -19,6 +19,11 @@ exports.up = (pgm) => {
       type: 'TEXT',
       notNull: true,
     },
+    role: {
+      type: 'VARCHAR(20)',
+      notNull: true,
+      default: pgm.func("'jobseeker'"),
+    },
     created_at: {
       type: 'TIMESTAMPTZ',
       notNull: true,

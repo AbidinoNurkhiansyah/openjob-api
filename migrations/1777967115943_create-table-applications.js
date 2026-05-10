@@ -21,7 +21,7 @@ exports.up = (pgm) => {
     status: {
       type: 'VARCHAR(20)',
       notNull: true,
-      default: "'pending'",
+      default: pgm.func("'pending'"),
     },
   });
 };
