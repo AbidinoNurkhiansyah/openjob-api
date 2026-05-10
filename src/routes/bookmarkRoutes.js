@@ -4,15 +4,12 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-// ALL PROTECTED
-router.use(authMiddleware);
-
-// Bookmark via job
-router.post('/jobs/:jobId/bookmark', bookmarkController.addBookmark);
-router.get('/jobs/:jobId/bookmark/:id', bookmarkController.getBookmarkByJobId);
-router.delete('/jobs/:jobId/bookmark', bookmarkController.deleteBookmark);
+// Bookmark via job (all protected)
+router.post('/jobs/:jobId/bookmark', authMiddleware, bookmarkController.addBookmark);
+router.get('/jobs/:jobId/bookmark/:id', authMiddleware, bookmarkController.getBookmarkByJobId);
+router.delete('/jobs/:jobId/bookmark', authMiddleware, bookmarkController.deleteBookmark);
 
 // All bookmarks
-router.get('/bookmarks', bookmarkController.getAllBookmarks);
+router.get('/bookmarks', authMiddleware, bookmarkController.getAllBookmarks);
 
 module.exports = router;
