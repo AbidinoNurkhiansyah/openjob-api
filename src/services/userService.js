@@ -1,8 +1,8 @@
 const userRepository = require('../repositories/userRepository');
 
 const userService = {
-  async addUser({ name, email, password }) {
-    const userId = await userRepository.addUser({ name, email, password });
+  async addUser({ name, email, password, role }) {
+    const userId = await userRepository.addUser({ name, email, password, role });
     return userId;
   },
 

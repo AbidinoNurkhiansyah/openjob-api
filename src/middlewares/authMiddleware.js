@@ -13,6 +13,7 @@ const authMiddleware = (req, res, next) => {
     const decoded = TokenManager.verifyAccessToken(token);
 
     req.userId = decoded.id;
+    req.userRole = decoded.role;
     next();
   } catch (error) {
     if (error instanceof AuthenticationError) {

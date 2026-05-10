@@ -3,8 +3,8 @@ const userService = require('../services/userService');
 const userController = {
   async register(req, res, next) {
     try {
-      const { name, email, password } = req.body;
-      const userId = await userService.addUser({ name, email, password });
+      const { name, email, password, role } = req.body;
+      const userId = await userService.addUser({ name, email, password, role });
 
       return res.status(201).json({
         status: 'success',

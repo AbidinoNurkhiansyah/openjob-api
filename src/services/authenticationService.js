@@ -4,10 +4,10 @@ const TokenManager = require('../utils/TokenManager');
 
 const authenticationService = {
   async login({ email, password }) {
-    const userId = await userRepository.verifyUserCredential(email, password);
+    const { id: userId, role } = await userRepository.verifyUserCredential(email, password);
 
-    const accessToken = TokenManager.generateAccessToken({ id: userId });
-    const refreshToken = TokenManager.generateRefreshToken({ id: userId });
+    const accessToken = TokenManager.generateAccessToken({ id: userId, role });
+    const refreshToken = TokenManager.generateRefreshToken({ id: userId, role });
 
     await authenticationRepository.addRefreshToken({ userId, refreshToken });
 
@@ -16,9 +16,9 @@ const authenticationService = {
 
   async refreshAccessToken(refreshToken) {
     await authenticationRepository.verifyRefreshToken(refreshToken);
-    const { id } = TokenManager.verifyRefreshToken(refreshToken);
+    const { id, role } = TokenManager.verifyRefreshToken(refreshToken);
 
-    const accessToken = TokenManager.generateAccessToken({ id });
+    const accessToken = TokenManager.generateAccessToken({ id, role });
     return accessToken;
   },
 

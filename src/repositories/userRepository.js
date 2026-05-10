@@ -6,7 +6,7 @@ const NotFoundError = require('../utils/NotFoundError');
 const AuthenticationError = require('../utils/AuthenticationError');
 
 const userRepository = {
-  async addUser({ name, email, password }) {
+  async addUser({ name, email, password, role = 'jobseeker' }) {
     // Check if email already exists
     const checkQuery = {
       text: 'SELECT id FROM users WHERE email = $1',
@@ -22,8 +22,8 @@ const userRepository = {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const query = {
-      text: 'INSERT INTO users (id, name, email, password) VALUES ($1, $2, $3, $4) RETURNING id',
-      values: [id, name, email, hashedPassword],
+      text: 'INSERT INTO users (id, name, email, password, role) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+      values: [id, name, email, hashedPassword, role],
     };
 
     const result = await pool.query(query);
@@ -32,7 +32,7 @@ const userRepository = {
 
   async getUserById(id) {
     const query = {
-      text: 'SELECT id, name, email, created_at, updated_at FROM users WHERE id = $1',
+      text: 'SELECT id, name, email, role, created_at, updated_at FROM users WHERE id = $1',
       values: [id],
     };
 
@@ -47,7 +47,7 @@ const userRepository = {
 
   async getUserByEmail(email) {
     const query = {
-      text: 'SELECT id, name, email FROM users WHERE email = $1',
+      text: 'SELECT id, name, email, role FROM users WHERE email = $1',
       values: [email],
     };
 
@@ -62,7 +62,7 @@ const userRepository = {
 
   async verifyUserCredential(email, password) {
     const query = {
-      text: 'SELECT id, password FROM users WHERE email = $1',
+      text: 'SELECT id, password, role FROM users WHERE email = $1',
       values: [email],
     };
 
@@ -72,14 +72,14 @@ const userRepository = {
       throw new AuthenticationError('Invalid credentials');
     }
 
-    const { id, password: hashedPassword } = result.rows[0];
+    const { id, password: hashedPassword, role } = result.rows[0];
     const match = await bcrypt.compare(password, hashedPassword);
 
     if (!match) {
       throw new AuthenticationError('Invalid credentials');
     }
 
-    return id;
+    return { id, role };
   },
 };
 
