@@ -3,14 +3,13 @@ const applicationService = require('../services/applicationService');
 const applicationController = {
   async addApplication(req, res, next) {
     try {
-      const { job_id } = req.body;
-      const user_id = req.userId;
+      const { user_id, job_id } = req.body;
       const applicationId = await applicationService.addApplication({ user_id, job_id });
 
       return res.status(201).json({
         status: 'success',
         message: 'Application submitted successfully',
-        data: { applicationId },
+        data: { id: applicationId },
       });
     } catch (error) {
       return next(error);
@@ -37,7 +36,7 @@ const applicationController = {
 
       return res.status(200).json({
         status: 'success',
-        data: { application },
+        data: application,
       });
     } catch (error) {
       return next(error);

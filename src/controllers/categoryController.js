@@ -9,7 +9,7 @@ const categoryController = {
       return res.status(201).json({
         status: 'success',
         message: 'Category created successfully',
-        data: { categoryId },
+        data: { id: categoryId },
       });
     } catch (error) {
       return next(error);
@@ -36,7 +36,7 @@ const categoryController = {
 
       return res.status(200).json({
         status: 'success',
-        data: { category },
+        data: category,
       });
     } catch (error) {
       return next(error);

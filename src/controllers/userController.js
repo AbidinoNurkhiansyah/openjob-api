@@ -9,7 +9,7 @@ const userController = {
       return res.status(201).json({
         status: 'success',
         message: 'User registered successfully',
-        data: { userId },
+        data: { id: userId },
       });
     } catch (error) {
       return next(error);
@@ -23,7 +23,7 @@ const userController = {
 
       return res.status(200).json({
         status: 'success',
-        data: { user },
+        data: user,
       });
     } catch (error) {
       return next(error);

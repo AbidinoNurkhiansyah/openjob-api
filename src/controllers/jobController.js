@@ -3,13 +3,13 @@ const jobService = require('../services/jobService');
 const jobController = {
   async addJob(req, res, next) {
     try {
-      const { title, description, company_id, category_id } = req.body;
-      const jobId = await jobService.addJob({ title, description, company_id, category_id });
+      const { title, description, company_id, category_id, job_type, experience_level, location_type, location_city, salary_min, salary_max, is_salary_visible, status } = req.body;
+      const jobId = await jobService.addJob({ title, description, company_id, category_id, job_type, experience_level, location_type, location_city, salary_min, salary_max, is_salary_visible, status });
 
       return res.status(201).json({
         status: 'success',
         message: 'Job created successfully',
-        data: { jobId },
+        data: { id: jobId },
       });
     } catch (error) {
       return next(error);
@@ -38,7 +38,7 @@ const jobController = {
 
       return res.status(200).json({
         status: 'success',
-        data: { job },
+        data: job,
       });
     } catch (error) {
       return next(error);
@@ -76,8 +76,8 @@ const jobController = {
   async updateJob(req, res, next) {
     try {
       const { id } = req.params;
-      const { title, description, company_id, category_id } = req.body;
-      await jobService.updateJob(id, { title, description, company_id, category_id });
+      const updates = req.body;
+      await jobService.updateJob(id, updates);
 
       return res.status(200).json({
         status: 'success',

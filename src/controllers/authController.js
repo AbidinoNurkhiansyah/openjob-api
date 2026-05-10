@@ -6,7 +6,7 @@ const authController = {
       const { email, password } = req.body;
       const { accessToken, refreshToken } = await authenticationService.login({ email, password });
 
-      return res.status(201).json({
+      return res.status(200).json({
         status: 'success',
         message: 'Login successful',
         data: { accessToken, refreshToken },

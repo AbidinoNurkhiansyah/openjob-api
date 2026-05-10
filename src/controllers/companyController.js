@@ -3,13 +3,13 @@ const companyService = require('../services/companyService');
 const companyController = {
   async addCompany(req, res, next) {
     try {
-      const { name, description } = req.body;
-      const companyId = await companyService.addCompany({ name, description });
+      const { name, location, description } = req.body;
+      const companyId = await companyService.addCompany({ name, location, description });
 
       return res.status(201).json({
         status: 'success',
         message: 'Company created successfully',
-        data: { companyId },
+        data: { id: companyId },
       });
     } catch (error) {
       return next(error);
@@ -36,7 +36,7 @@ const companyController = {
 
       return res.status(200).json({
         status: 'success',
-        data: { company },
+        data: company,
       });
     } catch (error) {
       return next(error);
@@ -46,8 +46,8 @@ const companyController = {
   async updateCompany(req, res, next) {
     try {
       const { id } = req.params;
-      const { name, description } = req.body;
-      await companyService.updateCompany(id, { name, description });
+      const { name, location, description } = req.body;
+      await companyService.updateCompany(id, { name, location, description });
 
       return res.status(200).json({
         status: 'success',

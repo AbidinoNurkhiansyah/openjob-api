@@ -10,7 +10,7 @@ const bookmarkController = {
       return res.status(201).json({
         status: 'success',
         message: 'Job bookmarked successfully',
-        data: { bookmarkId },
+        data: { id: bookmarkId },
       });
     } catch (error) {
       return next(error);
@@ -24,7 +24,7 @@ const bookmarkController = {
 
       return res.status(200).json({
         status: 'success',
-        data: { bookmark },
+        data: bookmark,
       });
     } catch (error) {
       return next(error);
