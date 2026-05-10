@@ -3,12 +3,13 @@ const pool = require('../config/database');
 const NotFoundError = require('../utils/NotFoundError');
 
 const jobRepository = {
-  async addJob({ title, description, company_id, category_id }) {
+  async addJob({ title, description, company_id, category_id, job_type, experience_level, location_type, location_city, salary_min, salary_max, is_salary_visible, status }) {
     const id = `job-${nanoid(16)}`;
 
     const query = {
-      text: 'INSERT INTO jobs (id, title, description, company_id, category_id) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-      values: [id, title, description || null, company_id, category_id],
+      text: `INSERT INTO jobs (id, title, description, company_id, category_id, job_type, experience_level, location_type, location_city, salary_min, salary_max, is_salary_visible, status)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`,
+      values: [id, title, description || null, company_id, category_id, job_type || null, experience_level || null, location_type || null, location_city || null, salary_min || null, salary_max || null, is_salary_visible || false, status || 'open'],
     };
 
     const result = await pool.query(query);
@@ -16,14 +17,15 @@ const jobRepository = {
   },
 
   async getJobs({ title, companyName } = {}) {
-    let queryText = `
+    let query = `
       SELECT jobs.*, companies.name AS company_name, categories.name AS category_name
       FROM jobs
       LEFT JOIN companies ON jobs.company_id = companies.id
       LEFT JOIN categories ON jobs.category_id = categories.id
     `;
-    const values = [];
+
     const conditions = [];
+    const values = [];
 
     if (title) {
       values.push(`%${title}%`);
@@ -36,10 +38,10 @@ const jobRepository = {
     }
 
     if (conditions.length > 0) {
-      queryText += ` WHERE ${conditions.join(' AND ')}`;
+      query += ` WHERE ${conditions.join(' AND ')}`;
     }
 
-    const result = await pool.query(queryText, values);
+    const result = await pool.query(query, values);
     return result.rows;
   },
 
@@ -96,10 +98,27 @@ const jobRepository = {
     return result.rows;
   },
 
-  async updateJob(id, { title, description, company_id, category_id }) {
+  async updateJob(id, updates) {
+    // Build dynamic update query from provided fields
+    const allowedFields = ['title', 'description', 'company_id', 'category_id', 'job_type', 'experience_level', 'location_type', 'location_city', 'salary_min', 'salary_max', 'is_salary_visible', 'status'];
+    const setClauses = [];
+    const values = [];
+
+    for (const field of allowedFields) {
+      if (updates[field] !== undefined) {
+        values.push(updates[field]);
+        setClauses.push(`${field} = $${values.length}`);
+      }
+    }
+
+    if (setClauses.length === 0) {
+      throw new NotFoundError('Job not found');
+    }
+
+    values.push(id);
     const query = {
-      text: 'UPDATE jobs SET title = $1, description = $2, company_id = $3, category_id = $4 WHERE id = $5 RETURNING id',
-      values: [title, description || null, company_id, category_id, id],
+      text: `UPDATE jobs SET ${setClauses.join(', ')} WHERE id = $${values.length} RETURNING id`,
+      values,
     };
 
     const result = await pool.query(query);

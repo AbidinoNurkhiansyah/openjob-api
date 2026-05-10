@@ -3,12 +3,12 @@ const pool = require('../config/database');
 const NotFoundError = require('../utils/NotFoundError');
 
 const companyRepository = {
-  async addCompany({ name, description }) {
+  async addCompany({ name, location, description }) {
     const id = `company-${nanoid(16)}`;
 
     const query = {
-      text: 'INSERT INTO companies (id, name, description) VALUES ($1, $2, $3) RETURNING id',
-      values: [id, name, description || null],
+      text: 'INSERT INTO companies (id, name, location, description) VALUES ($1, $2, $3, $4) RETURNING id',
+      values: [id, name, location, description || null],
     };
 
     const result = await pool.query(query);
@@ -35,10 +35,10 @@ const companyRepository = {
     return result.rows[0];
   },
 
-  async updateCompany(id, { name, description }) {
+  async updateCompany(id, { name, location, description }) {
     const query = {
-      text: 'UPDATE companies SET name = $1, description = $2 WHERE id = $3 RETURNING id',
-      values: [name, description || null, id],
+      text: 'UPDATE companies SET name = $1, location = $2, description = $3 WHERE id = $4 RETURNING id',
+      values: [name, location || null, description || null, id],
     };
 
     const result = await pool.query(query);

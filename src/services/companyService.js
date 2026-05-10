@@ -1,8 +1,8 @@
 const companyRepository = require('../repositories/companyRepository');
 
 const companyService = {
-  async addCompany({ name, description }) {
-    const companyId = await companyRepository.addCompany({ name, description });
+  async addCompany({ name, location, description }) {
+    const companyId = await companyRepository.addCompany({ name, location, description });
     return companyId;
   },
 
@@ -16,8 +16,8 @@ const companyService = {
     return company;
   },
 
-  async updateCompany(id, { name, description }) {
-    await companyRepository.updateCompany(id, { name, description });
+  async updateCompany(id, { name, location, description }) {
+    await companyRepository.updateCompany(id, { name, location, description });
   },
 
   async deleteCompany(id) {

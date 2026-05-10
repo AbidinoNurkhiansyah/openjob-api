@@ -1,8 +1,8 @@
 const jobRepository = require('../repositories/jobRepository');
 
 const jobService = {
-  async addJob({ title, description, company_id, category_id }) {
-    const jobId = await jobRepository.addJob({ title, description, company_id, category_id });
+  async addJob(data) {
+    const jobId = await jobRepository.addJob(data);
     return jobId;
   },
 
@@ -26,8 +26,8 @@ const jobService = {
     return jobs;
   },
 
-  async updateJob(id, { title, description, company_id, category_id }) {
-    await jobRepository.updateJob(id, { title, description, company_id, category_id });
+  async updateJob(id, updates) {
+    await jobRepository.updateJob(id, updates);
   },
 
   async deleteJob(id) {
