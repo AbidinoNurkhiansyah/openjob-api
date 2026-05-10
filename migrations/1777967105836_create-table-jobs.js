@@ -25,6 +25,32 @@ exports.up = (pgm) => {
       references: 'categories(id)',
       onDelete: 'CASCADE',
     },
+    job_type: {
+      type: 'VARCHAR(50)',
+    },
+    experience_level: {
+      type: 'VARCHAR(50)',
+    },
+    location_type: {
+      type: 'VARCHAR(50)',
+    },
+    location_city: {
+      type: 'VARCHAR(255)',
+    },
+    salary_min: {
+      type: 'BIGINT',
+    },
+    salary_max: {
+      type: 'BIGINT',
+    },
+    is_salary_visible: {
+      type: 'BOOLEAN',
+      default: false,
+    },
+    status: {
+      type: 'VARCHAR(20)',
+      default: pgm.func("'open'"),
+    },
   });
 };
 

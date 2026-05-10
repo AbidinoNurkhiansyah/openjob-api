@@ -10,6 +10,10 @@ exports.up = (pgm) => {
       type: 'VARCHAR(255)',
       notNull: true,
     },
+    location: {
+      type: 'VARCHAR(255)',
+      notNull: true,
+    },
     description: {
       type: 'TEXT',
     },
