@@ -105,6 +105,29 @@ const applicationRepository = {
       throw new NotFoundError('Application not found');
     }
   },
+
+  async getApplicationDetailsForEmail(id) {
+    const query = {
+      text: `
+        SELECT 
+          applications.id,
+          applications.created_at AS application_date,
+          applicant.name AS applicant_name,
+          applicant.email AS applicant_email,
+          owner.email AS owner_email
+        FROM applications
+        JOIN users AS applicant ON applications.user_id = applicant.id
+        JOIN jobs ON applications.job_id = jobs.id
+        JOIN companies ON jobs.company_id = companies.id
+        JOIN users AS owner ON companies.user_id = owner.id
+        WHERE applications.id = $1
+      `,
+      values: [id],
+    };
+
+    const result = await pool.query(query);
+    return result.rows[0];
+  },
 };
 
 module.exports = applicationRepository;

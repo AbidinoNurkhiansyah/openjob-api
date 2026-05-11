@@ -16,9 +16,13 @@ const jobRoutes = require('./routes/jobRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const bookmarkRoutes = require('./routes/bookmarkRoutes');
 const documentRoutes = require('./routes/documentRoutes');
+const { connectRabbitMQ } = require('./config/rabbitmq');
 const profileRoutes = require('./routes/profileRoutes');
 
 const app = express();
+
+// Connect to RabbitMQ
+connectRabbitMQ();
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '../uploads');

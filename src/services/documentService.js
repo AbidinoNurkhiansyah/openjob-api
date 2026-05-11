@@ -1,8 +1,8 @@
 const documentRepository = require('../repositories/documentRepository');
 
 const documentService = {
-  async addDocument({ user_id, file_url }) {
-    const documentId = await documentRepository.addDocument({ user_id, file_url });
+  async addDocument({ user_id, file_url, original_filename }) {
+    const documentId = await documentRepository.addDocument({ user_id, file_url, original_filename });
     return documentId;
   },
 

@@ -33,6 +33,11 @@ const applicationService = {
   async deleteApplication(id) {
     await applicationRepository.deleteApplication(id);
   },
+
+  async getApplicationDetailsForEmail(id) {
+    const details = await applicationRepository.getApplicationDetailsForEmail(id);
+    return details;
+  },
 };
 
 module.exports = applicationService;

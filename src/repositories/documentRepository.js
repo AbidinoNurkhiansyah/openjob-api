@@ -3,12 +3,12 @@ const pool = require('../config/database');
 const NotFoundError = require('../utils/NotFoundError');
 
 const documentRepository = {
-  async addDocument({ user_id, file_url }) {
+  async addDocument({ user_id, file_url, original_filename }) {
     const id = `doc-${nanoid(16)}`;
 
     const query = {
-      text: 'INSERT INTO documents (id, user_id, file_url) VALUES ($1, $2, $3) RETURNING id',
-      values: [id, user_id, file_url],
+      text: 'INSERT INTO documents (id, user_id, file_url, original_filename) VALUES ($1, $2, $3, $4) RETURNING id',
+      values: [id, user_id, file_url, original_filename],
     };
 
     const result = await pool.query(query);
