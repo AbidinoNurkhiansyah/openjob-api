@@ -1,10 +1,17 @@
 const applicationService = require('../services/applicationService');
+const cacheService = require('../services/cacheService');
+const mqService = require('../services/mqService');
 
 const applicationController = {
   async addApplication(req, res, next) {
     try {
       const { user_id, job_id } = req.body;
       const applicationId = await applicationService.addApplication({ user_id, job_id });
+
+      await mqService.sendMessage('application:create', { application_id: applicationId });
+
+      await cacheService.delete(`applications:user:${user_id}`);
+      await cacheService.delete(`applications:job:${job_id}`);
 
       return res.status(201).json({
         status: 'success',
@@ -32,7 +39,19 @@ const applicationController = {
   async getApplicationById(req, res, next) {
     try {
       const { id } = req.params;
+      const cacheKey = `application:${id}`;
+      
+      const cached = await cacheService.get(cacheKey);
+      if (cached) {
+        res.setHeader('X-Data-Source', 'cache');
+        return res.status(200).json({
+          status: 'success',
+          data: JSON.parse(cached),
+        });
+      }
+
       const application = await applicationService.getApplicationById(id);
+      await cacheService.set(cacheKey, JSON.stringify(application), 3600);
 
       return res.status(200).json({
         status: 'success',
@@ -46,7 +65,19 @@ const applicationController = {
   async getApplicationsByUserId(req, res, next) {
     try {
       const { userId } = req.params;
+      const cacheKey = `applications:user:${userId}`;
+      
+      const cached = await cacheService.get(cacheKey);
+      if (cached) {
+        res.setHeader('X-Data-Source', 'cache');
+        return res.status(200).json({
+          status: 'success',
+          data: { applications: JSON.parse(cached) },
+        });
+      }
+
       const applications = await applicationService.getApplicationsByUserId(userId);
+      await cacheService.set(cacheKey, JSON.stringify(applications), 3600);
 
       return res.status(200).json({
         status: 'success',
@@ -60,7 +91,19 @@ const applicationController = {
   async getApplicationsByJobId(req, res, next) {
     try {
       const { jobId } = req.params;
+      const cacheKey = `applications:job:${jobId}`;
+      
+      const cached = await cacheService.get(cacheKey);
+      if (cached) {
+        res.setHeader('X-Data-Source', 'cache');
+        return res.status(200).json({
+          status: 'success',
+          data: { applications: JSON.parse(cached) },
+        });
+      }
+
       const applications = await applicationService.getApplicationsByJobId(jobId);
+      await cacheService.set(cacheKey, JSON.stringify(applications), 3600);
 
       return res.status(200).json({
         status: 'success',
@@ -75,7 +118,12 @@ const applicationController = {
     try {
       const { id } = req.params;
       const { status } = req.body;
+      const application = await applicationService.getApplicationById(id);
       await applicationService.updateApplication(id, { status });
+
+      await cacheService.delete(`application:${id}`);
+      await cacheService.delete(`applications:user:${application.user_id}`);
+      await cacheService.delete(`applications:job:${application.job_id}`);
 
       return res.status(200).json({
         status: 'success',
@@ -89,7 +137,12 @@ const applicationController = {
   async deleteApplication(req, res, next) {
     try {
       const { id } = req.params;
+      const application = await applicationService.getApplicationById(id);
       await applicationService.deleteApplication(id);
+
+      await cacheService.delete(`application:${id}`);
+      await cacheService.delete(`applications:user:${application.user_id}`);
+      await cacheService.delete(`applications:job:${application.job_id}`);
 
       return res.status(200).json({
         status: 'success',

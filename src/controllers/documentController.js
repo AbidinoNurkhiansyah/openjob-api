@@ -1,4 +1,6 @@
 const documentService = require('../services/documentService');
+const path = require('path');
+const fs = require('fs');
 
 const documentController = {
   async addDocument(req, res, next) {
@@ -13,7 +15,8 @@ const documentController = {
       }
 
       const file_url = `/uploads/${req.file.filename}`;
-      const documentId = await documentService.addDocument({ user_id, file_url });
+      const original_filename = req.file.originalname;
+      const documentId = await documentService.addDocument({ user_id, file_url, original_filename });
 
       return res.status(201).json({
         status: 'success',
@@ -42,11 +45,19 @@ const documentController = {
     try {
       const { id } = req.params;
       const document = await documentService.getDocumentById(id);
+      
+      const filePath = path.join(__dirname, '../../', document.file_url);
+      
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({
+          status: 'failed',
+          message: 'File not found on server',
+        });
+      }
 
-      return res.status(200).json({
-        status: 'success',
-        data: document,
-      });
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${document.original_filename}"`);
+      return res.sendFile(filePath);
     } catch (error) {
       return next(error);
     }
