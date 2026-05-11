@@ -17,6 +17,21 @@ const errorMiddleware = (err, req, res, next) => {
     });
   }
 
+  // PostgreSQL errors
+  if (err.code === '23503') { // Foreign key violation
+    return res.status(404).json({
+      status: 'failed',
+      message: 'Resource not found or foreign key constraint failed',
+    });
+  }
+
+  if (err.code === '23505') { // Unique violation
+    return res.status(400).json({
+      status: 'failed',
+      message: 'Data already exists',
+    });
+  }
+
   console.error('Server Error:', err);
   return res.status(500).json({
     status: 'error',
