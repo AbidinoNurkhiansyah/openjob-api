@@ -53,6 +53,7 @@ const applicationController = {
       const application = await applicationService.getApplicationById(id);
       await cacheService.set(cacheKey, JSON.stringify(application), 3600);
 
+      res.setHeader('X-Data-Source', 'database');
       return res.status(200).json({
         status: 'success',
         data: application,
@@ -79,6 +80,7 @@ const applicationController = {
       const applications = await applicationService.getApplicationsByUserId(userId);
       await cacheService.set(cacheKey, JSON.stringify(applications), 3600);
 
+      res.setHeader('X-Data-Source', 'database');
       return res.status(200).json({
         status: 'success',
         data: { applications },
@@ -105,6 +107,7 @@ const applicationController = {
       const applications = await applicationService.getApplicationsByJobId(jobId);
       await cacheService.set(cacheKey, JSON.stringify(applications), 3600);
 
+      res.setHeader('X-Data-Source', 'database');
       return res.status(200).json({
         status: 'success',
         data: { applications },

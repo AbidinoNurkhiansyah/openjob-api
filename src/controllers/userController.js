@@ -34,6 +34,7 @@ const userController = {
       const user = await userService.getUserById(id);
       await cacheService.set(cacheKey, JSON.stringify(user), 3600);
 
+      res.setHeader('X-Data-Source', 'database');
       return res.status(200).json({
         status: 'success',
         data: user,

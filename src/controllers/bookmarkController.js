@@ -68,6 +68,7 @@ const bookmarkController = {
       const bookmarks = await bookmarkService.getBookmarksByUserId(user_id);
       await cacheService.set(cacheKey, JSON.stringify(bookmarks), 3600);
 
+      res.setHeader('X-Data-Source', 'database');
       return res.status(200).json({
         status: 'success',
         data: { bookmarks },

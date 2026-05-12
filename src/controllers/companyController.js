@@ -48,6 +48,7 @@ const companyController = {
       const company = await companyService.getCompanyById(id);
       await cacheService.set(cacheKey, JSON.stringify(company), 3600);
 
+      res.setHeader('X-Data-Source', 'database');
       return res.status(200).json({
         status: 'success',
         data: company,
