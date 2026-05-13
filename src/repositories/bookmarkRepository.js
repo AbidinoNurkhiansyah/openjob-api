@@ -17,10 +17,26 @@ const bookmarkRepository = {
 
   async getBookmarks() {
     const query = `
-      SELECT bookmarks.*, users.name AS user_name, jobs.title AS job_title
+      SELECT 
+        bookmarks.*, 
+        jobs.title,
+        jobs.description,
+        jobs.company_id,
+        jobs.category_id,
+        jobs.job_type,
+        jobs.experience_level,
+        jobs.location_type,
+        jobs.location_city,
+        jobs.salary_min,
+        jobs.salary_max,
+        jobs.is_salary_visible,
+        jobs.status,
+        companies.name AS company_name,
+        categories.name AS category_name
       FROM bookmarks
-      LEFT JOIN users ON bookmarks.user_id = users.id
       LEFT JOIN jobs ON bookmarks.job_id = jobs.id
+      LEFT JOIN companies ON jobs.company_id = companies.id
+      LEFT JOIN categories ON jobs.category_id = categories.id
     `;
 
     const result = await pool.query(query);
@@ -50,9 +66,26 @@ const bookmarkRepository = {
   async getBookmarksByUserId(userId) {
     const query = {
       text: `
-        SELECT bookmarks.*, jobs.title AS job_title
+        SELECT 
+          bookmarks.*, 
+          jobs.title,
+          jobs.description,
+          jobs.company_id,
+          jobs.category_id,
+          jobs.job_type,
+          jobs.experience_level,
+          jobs.location_type,
+          jobs.location_city,
+          jobs.salary_min,
+          jobs.salary_max,
+          jobs.is_salary_visible,
+          jobs.status,
+          companies.name AS company_name,
+          categories.name AS category_name
         FROM bookmarks
         LEFT JOIN jobs ON bookmarks.job_id = jobs.id
+        LEFT JOIN companies ON jobs.company_id = companies.id
+        LEFT JOIN categories ON jobs.category_id = categories.id
         WHERE bookmarks.user_id = $1
       `,
       values: [userId],

@@ -18,7 +18,7 @@ const jobRepository = {
 
   async getJobs({ title, companyName } = {}) {
     let query = `
-      SELECT jobs.*, companies.name AS company_name, categories.name AS category_name
+      SELECT jobs.*
       FROM jobs
       LEFT JOIN companies ON jobs.company_id = companies.id
       LEFT JOIN categories ON jobs.category_id = categories.id
