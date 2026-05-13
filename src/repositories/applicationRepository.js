@@ -4,7 +4,7 @@ const NotFoundError = require('../utils/NotFoundError');
 
 const applicationRepository = {
   async addApplication({ user_id, job_id }) {
-    const id = `app-${nanoid(16)}`;
+    const id = `application-${nanoid(16)}`;
 
     const query = {
       text: 'INSERT INTO applications (id, user_id, job_id) VALUES ($1, $2, $3) RETURNING id',
@@ -17,7 +17,16 @@ const applicationRepository = {
 
   async getApplications() {
     const query = `
-      SELECT applications.*, users.name AS user_name, jobs.title AS job_title
+      SELECT 
+        applications.*, 
+        users.name AS user_name, 
+        jobs.title AS job_title,
+        jobs.job_type,
+        jobs.experience_level,
+        jobs.location_type,
+        jobs.location_city,
+        jobs.salary_min,
+        jobs.salary_max
       FROM applications
       LEFT JOIN users ON applications.user_id = users.id
       LEFT JOIN jobs ON applications.job_id = jobs.id
@@ -51,9 +60,21 @@ const applicationRepository = {
   async getApplicationsByUserId(userId) {
     const query = {
       text: `
-        SELECT applications.*, jobs.title AS job_title
+        SELECT 
+          applications.*, 
+          jobs.title AS job_title,
+          jobs.description AS job_description,
+          jobs.job_type,
+          jobs.experience_level,
+          jobs.location_type,
+          jobs.location_city,
+          jobs.salary_min,
+          jobs.salary_max,
+          companies.name AS company_name,
+          companies.location AS company_location
         FROM applications
         LEFT JOIN jobs ON applications.job_id = jobs.id
+        LEFT JOIN companies ON jobs.company_id = companies.id
         WHERE applications.user_id = $1
       `,
       values: [userId],
@@ -127,6 +148,15 @@ const applicationRepository = {
 
     const result = await pool.query(query);
     return result.rows[0];
+  },
+  async checkApplicationExists(user_id, job_id) {
+    const query = {
+      text: 'SELECT id FROM applications WHERE user_id = $1 AND job_id = $2',
+      values: [user_id, job_id],
+    };
+
+    const result = await pool.query(query);
+    return result.rows.length > 0;
   },
 };
 

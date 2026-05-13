@@ -1,7 +1,12 @@
 const applicationRepository = require('../repositories/applicationRepository');
+const InvariantError = require('../utils/InvariantError');
 
 const applicationService = {
   async addApplication({ user_id, job_id }) {
+    const exists = await applicationRepository.checkApplicationExists(user_id, job_id);
+    if (exists) {
+      throw new InvariantError('Application already exists');
+    }
     const applicationId = await applicationRepository.addApplication({ user_id, job_id });
     return applicationId;
   },

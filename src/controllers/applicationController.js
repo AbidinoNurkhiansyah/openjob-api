@@ -16,7 +16,12 @@ const applicationController = {
       return res.status(201).json({
         status: 'success',
         message: 'Application submitted successfully',
-        data: { id: applicationId },
+        data: { 
+          id: applicationId,
+          user_id,
+          job_id,
+          status: 'pending'
+        },
       });
     } catch (error) {
       return next(error);
