@@ -10,7 +10,7 @@ const documentController = {
       if (!req.file) {
         return res.status(400).json({
           status: 'failed',
-          message: 'No file uploaded',
+          message: 'File is required',
         });
       }
 
@@ -21,7 +21,12 @@ const documentController = {
       return res.status(201).json({
         status: 'success',
         message: 'Document uploaded successfully',
-        data: { id: documentId },
+        data: { 
+          documentId,
+          filename: req.file.filename,
+          originalName: req.file.originalname,
+          size: req.file.size
+        },
       });
     } catch (error) {
       return next(error);
